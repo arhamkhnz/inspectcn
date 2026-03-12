@@ -1,3 +1,3 @@
-# WXT + React
+# inspectcn
 
-This template should help get you started developing with React in WXT.
+Chrome extension built with WXT, React, Tailwind CSS, and shadcn/ui.
