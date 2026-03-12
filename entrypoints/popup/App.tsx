@@ -5,7 +5,7 @@ function App() {
     <main className="min-h-screen px-4 py-5">
       <div className="mx-auto flex w-full max-w-sm flex-col gap-4">
         <section className="rounded-3xl border border-border/60 bg-card/90 p-4 text-card-foreground shadow-xl shadow-slate-950/10 backdrop-blur">
-          <p className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
+          <p className="font-pixel-line text-xs uppercase tracking-tight text-muted-foreground">
             InspectCN
           </p>
           <h1 className="mt-3 text-2xl font-semibold tracking-tight">
