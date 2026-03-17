@@ -13,9 +13,12 @@ export default defineContentScript({
       position: "overlay",
       anchor: "body",
       onMount(container, shadow) {
+        container.dataset.inspectcnUi = "true";
+
         const app = document.createElement("div");
         app.id = "root";
         app.className = "dark";
+        app.dataset.inspectcnUi = "true";
         container.append(app);
 
         const root = ReactDOM.createRoot(app);

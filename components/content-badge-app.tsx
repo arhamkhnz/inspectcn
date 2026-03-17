@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
-import { ThemeTokenInspector } from "@/components/theme-token-inspector";
+import {
+  ThemeCapturePanel,
+  ThemeTokenEmptyState,
+  ThemeTokenLoadingState,
+  ThemeTokenTabs,
+  useThemeTokenInspector,
+} from "@/components/theme-token-inspector";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -47,6 +53,7 @@ export function ContentBadgeApp({ shadowRoot }: { shadowRoot: ShadowRoot }) {
 
   const anchorPoints = getAnchorPoints(viewport.width, viewport.height);
   const fallbackAnchor = anchorPoints[DEFAULT_ANCHOR_INDEX] ?? anchorPoints[0];
+  const inspector = useThemeTokenInspector(isOpen);
 
   if (!fallbackAnchor) {
     throw new Error("Expected at least one anchor point.");
@@ -217,6 +224,7 @@ export function ContentBadgeApp({ shadowRoot }: { shadowRoot: ShadowRoot }) {
       className="pointer-events-none fixed inset-0 z-[2147483647]"
       data-anchor={activeAnchor.id}
       data-dragging={isDragging}
+      data-inspectcn-ui="true"
     >
       <div
         className="pointer-events-auto absolute"
@@ -248,7 +256,7 @@ export function ContentBadgeApp({ shadowRoot }: { shadowRoot: ShadowRoot }) {
 
           <PopoverContent
             align={popoverPlacement.align}
-            className="h-[min(42rem,calc(100vh-2rem))] w-[min(24rem,calc(100vw-2rem))] gap-2 overflow-hidden"
+            className="h-[min(42rem,calc(100vh-2rem))] w-[min(24rem,calc(100vw-2rem))] gap-2 overflow-hidden font-sans"
             container={shadowRoot}
             initialFocus={false}
             side={popoverPlacement.side}
@@ -259,7 +267,18 @@ export function ContentBadgeApp({ shadowRoot }: { shadowRoot: ShadowRoot }) {
               <PopoverDescription className="text-xs">Inspect theme tokens on this page.</PopoverDescription>
             </PopoverHeader>
             <Separator />
-            <ThemeTokenInspector isOpen={isOpen} />
+
+            {isOpen && !inspector.snapshots ? (
+              <ThemeTokenLoadingState />
+            ) : !inspector.snapshots ? (
+              <ThemeTokenEmptyState />
+            ) : (
+              <>
+                <ThemeCapturePanel inspector={inspector} />
+                <Separator />
+                <ThemeTokenTabs inspector={inspector} />
+              </>
+            )}
           </PopoverContent>
         </Popover>
       </div>

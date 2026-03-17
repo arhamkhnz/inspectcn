@@ -1,4 +1,4 @@
-import { buildThemeBlock, type ThemeTokenSnapshots } from "@/lib/content-badge/theme-tokens";
+import { type ActiveThemeSnapshot, buildThemeBlock } from "@/lib/content-badge/theme-tokens";
 
 const CAPTURED_THEME_KEY = "inspectcn:captured-theme";
 const LOCALHOST_THEME_KEY = "inspectcn:localhost-themes";
@@ -6,9 +6,11 @@ const THEME_STYLE_ID = "inspectcn-theme-override";
 
 export type CapturedThemeDraft = {
   capturedAt: number;
+  mode: "light" | "dark";
+  radius: string;
+  snapshot: ActiveThemeSnapshot["snapshot"];
   sourceTitle: string;
   sourceUrl: string;
-  snapshots: ThemeTokenSnapshots;
 };
 
 type LocalhostThemeMap = Record<string, CapturedThemeDraft>;
@@ -27,25 +29,16 @@ export function isLocalhostPage(url = window.location.href) {
 }
 
 export function buildThemeStyles(draft: CapturedThemeDraft) {
-  const radiusLine = draft.snapshots.radius ? `  --radius: ${draft.snapshots.radius};\n` : "";
+  const lines = draft.snapshot.groups
+    .flatMap((group) => group.values)
+    .filter((token) => !token.isMissing)
+    .map((token) => `  ${token.cssVar}: ${token.value};`);
 
-  return [
-    ":root {",
-    `${radiusLine}${draft.snapshots.light.groups
-      .flatMap((group) => group.values)
-      .filter((token) => !token.isMissing)
-      .map((token) => `  ${token.cssVar}: ${token.value};`)
-      .join("\n")}`,
-    "}",
-    "",
-    ".dark {",
-    `${draft.snapshots.dark.groups
-      .flatMap((group) => group.values)
-      .filter((token) => !token.isMissing)
-      .map((token) => `  ${token.cssVar}: ${token.value};`)
-      .join("\n")}`,
-    "}",
-  ].join("\n");
+  if (draft.radius) {
+    lines.unshift(`  --radius: ${draft.radius};`);
+  }
+
+  return `:root {\n${lines.join("\n")}\n}`;
 }
 
 export function applyThemeDraftToDocument(draft: CapturedThemeDraft) {
@@ -69,12 +62,14 @@ export async function readCapturedThemeDraft() {
   return stored[CAPTURED_THEME_KEY] ?? null;
 }
 
-export async function saveCapturedThemeDraft(snapshots: ThemeTokenSnapshots) {
+export async function saveCapturedThemeDraft(theme: ActiveThemeSnapshot) {
   const draft: CapturedThemeDraft = {
     capturedAt: Date.now(),
+    mode: theme.mode,
+    radius: theme.radius,
+    snapshot: theme.snapshot,
     sourceTitle: document.title,
     sourceUrl: window.location.href,
-    snapshots,
   };
 
   await browser.storage.local.set({
@@ -82,6 +77,10 @@ export async function saveCapturedThemeDraft(snapshots: ThemeTokenSnapshots) {
   });
 
   return draft;
+}
+
+export async function clearCapturedThemeDraft() {
+  await browser.storage.local.remove(CAPTURED_THEME_KEY);
 }
 
 export async function readLocalhostThemeForOrigin(origin: string) {
@@ -142,6 +141,6 @@ export async function applyStoredLocalhostThemeForCurrentPage() {
   return null;
 }
 
-export function buildCopyBlock(mode: "light" | "dark", draft: CapturedThemeDraft) {
-  return buildThemeBlock(mode, draft.snapshots[mode]);
+export function buildCopyBlock(draft: CapturedThemeDraft) {
+  return buildThemeBlock(draft.mode, draft.snapshot);
 }
