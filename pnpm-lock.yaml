@@ -51,6 +51,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
+      '@wxt-dev/auto-icons':
+        specifier: ^1.1.1
+        version: 1.1.1(wxt@0.20.18(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0))
       '@wxt-dev/module-react':
         specifier: ^1.1.5
         version: 1.2.1(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0))(wxt@0.20.18(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0))
@@ -1137,6 +1140,11 @@ packages:
 
   '@webext-core/match-patterns@1.0.3':
     resolution: {integrity: sha512-NY39ACqCxdKBmHgw361M9pfJma8e4AZo20w9AY+5ZjIj1W2dvXC8J31G5fjfOGbulW9w4WKpT8fPooi0mLkn9A==}
+
+  '@wxt-dev/auto-icons@1.1.1':
+    resolution: {integrity: sha512-Dw2NKK51CCFurE95NptiEheuxVtkeX4vTQwEbhCkFVP9LzXNxOZTX9C9NAsGe6OfahelXlS51TW74hTSzsMILw==}
+    peerDependencies:
+      wxt: '>=0.19.0'
 
   '@wxt-dev/browser@0.1.37':
     resolution: {integrity: sha512-I32XWCNRy2W6UgbaVXz8BHGBGtm8urGRRBrcNLagUBXTrBi7wCE6zWePUvvK+nUl7qUCZ7iQ1ufdP0c1DEWisw==}
@@ -3861,8 +3869,7 @@ snapshots:
     dependencies:
       hono: 4.12.7
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.34.5':
     optionalDependencies:
@@ -4332,6 +4339,13 @@ snapshots:
       is-potential-custom-element-name: 1.0.1
 
   '@webext-core/match-patterns@1.0.3': {}
+
+  '@wxt-dev/auto-icons@1.1.1(wxt@0.20.18(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0))':
+    dependencies:
+      defu: 6.1.4
+      fs-extra: 11.3.4
+      sharp: 0.34.5
+      wxt: 0.20.18(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)
 
   '@wxt-dev/browser@0.1.37':
     dependencies:
@@ -6138,7 +6152,6 @@ snapshots:
       '@img/sharp-win32-arm64': 0.34.5
       '@img/sharp-win32-ia32': 0.34.5
       '@img/sharp-win32-x64': 0.34.5
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:

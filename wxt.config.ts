@@ -5,7 +5,10 @@ import path from "node:path";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
-  modules: ["@wxt-dev/module-react"],
+  modules: ["@wxt-dev/module-react", "@wxt-dev/auto-icons"],
+  autoIcons: {
+    baseIconPath: "public/icon.svg",
+  },
   manifest: {
     name: "Inspectcn",
     description: "Chrome extension built with WXT, React, Tailwind CSS, and shadcn/ui.",
