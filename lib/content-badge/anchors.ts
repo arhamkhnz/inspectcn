@@ -1,6 +1,6 @@
 export const BADGE_MARGIN = 16;
 export const BADGE_SIZE = 40;
-export const DEFAULT_ANCHOR_INDEX = 7;
+export const DEFAULT_ANCHOR_INDEX = 1;
 
 export type BadgePosition = {
   x: number;

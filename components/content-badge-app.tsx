@@ -8,6 +8,7 @@ import {
   useThemeTokenInspector,
 } from "@/components/theme-token-inspector";
 import { Button } from "@/components/ui/button";
+import { InspectcnLogo } from "@/components/ui/inspectcn-logo";
 import {
   Popover,
   PopoverContent,
@@ -61,7 +62,6 @@ export function ContentBadgeApp({ shadowRoot }: { shadowRoot: ShadowRoot }) {
 
   const activeAnchor = anchorPoints[anchorIndex] ?? fallbackAnchor;
   const position = dragPosition ?? activeAnchor;
-
   useEffect(() => {
     let cancelled = false;
 
@@ -243,13 +243,13 @@ export function ContentBadgeApp({ shadowRoot }: { shadowRoot: ShadowRoot }) {
             render={
               <Button
                 className={cn(
-                  "size-10 touch-none select-none rounded-xl px-0 font-pixel-line text-[12px] tracking-tight shadow-[0_8px_24px_rgba(15,23,42,0.18)]",
+                  "touch-none select-none shadow-[0_8px_24px_rgba(15,23,42,0.18)]",
                   isDragging ? "cursor-grabbing" : "cursor-grab",
                 )}
                 size="icon-lg"
-                variant="default"
+                variant="secondary"
               >
-                CN
+                <InspectcnLogo />
               </Button>
             }
           />
