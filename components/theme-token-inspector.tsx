@@ -1,8 +1,18 @@
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 
-import { CheckIcon, CopyIcon, LoaderCircleIcon, PaletteIcon, RocketIcon } from "lucide-react";
+import {
+  CheckIcon,
+  CopyIcon,
+  LoaderCircleIcon,
+  PaletteIcon,
+  RocketIcon,
+  RotateCcwIcon,
+  Trash2Icon,
+} from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import {
   applyThemeDraftToDocument,
@@ -144,24 +154,26 @@ export function ThemeTokenLoadingState() {
 }
 
 export function ThemeCapturePanel({ inspector }: { inspector: ThemeTokenInspectorState }) {
+  const captureLabel = inspector.capturedDraft ? "Refresh" : "Capture";
+  const sourceTitle = inspector.capturedDraft?.sourceTitle || null;
+  const sourceUrl = inspector.capturedDraft?.sourceUrl || null;
+  const sourceHostname = sourceUrl ? new URL(sourceUrl).hostname.replace(/^www\./, "") : null;
+
   return (
-    <div className="flex flex-col gap-3 rounded-xl border bg-card/50 p-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="min-w-0 flex-1 text-foreground text-sm">{inspector.captureSummary}</p>
-        {inspector.captureState ? (
-          <span className="text-[11px] text-muted-foreground">{inspector.captureState}</span>
-        ) : null}
-      </div>
+    <section className="flex flex-col gap-2">
+      <p className="text-balance text-foreground text-sm leading-tight">{inspector.captureSummary}</p>
+
+      {inspector.capturedDraft ? (
+        <p className="truncate text-muted-foreground text-xs leading-none">
+          {sourceTitle || sourceHostname || sourceUrl}
+        </p>
+      ) : null}
 
       <div className="flex flex-wrap gap-2">
-        <Button disabled={inspector.isLoading} onClick={inspector.refresh} size="xs" type="button" variant="ghost">
-          {inspector.isLoading ? <LoaderCircleIcon className="animate-spin" data-icon="inline-start" /> : null}
-          {inspector.isLoading ? "Reading..." : "Reread"}
-        </Button>
         <Button
           disabled={inspector.isLoading}
           onClick={inspector.captureCurrentTheme}
-          size="xs"
+          size="sm"
           type="button"
           variant="outline"
         >
@@ -170,56 +182,66 @@ export function ThemeCapturePanel({ inspector }: { inspector: ThemeTokenInspecto
           ) : (
             <PaletteIcon data-icon="inline-start" />
           )}
-          {inspector.capturedDraft ? "Refresh capture" : "Capture theme"}
+          {captureLabel}
         </Button>
+        <Button
+          disabled={!inspector.capturedDraft}
+          onClick={inspector.copyCapturedTheme}
+          size="sm"
+          type="button"
+          variant="ghost"
+        >
+          <CopyIcon data-icon="inline-start" />
+          {inspector.copiedKey === "captured-theme" ? "Copied" : "Copy"}
+        </Button>
+        <Button
+          disabled={!inspector.capturedDraft}
+          onClick={inspector.clearCapturedTheme}
+          size="sm"
+          type="button"
+          variant="ghost"
+        >
+          <Trash2Icon data-icon="inline-start" />
+          Clear
+        </Button>
+      </div>
 
-        {inspector.capturedDraft ? (
-          <>
-            <Button onClick={inspector.copyCapturedTheme} size="xs" type="button" variant="ghost">
-              <CopyIcon data-icon="inline-start" />
-              {inspector.copiedKey === "captured-theme"
-                ? `Copied ${inspector.capturedDraft?.mode === "dark" ? ".dark" : ":root"}`
-                : `Copy ${inspector.capturedDraft?.mode === "dark" ? ".dark" : ":root"}`}
-            </Button>
-            <Button onClick={inspector.clearCapturedTheme} size="xs" type="button" variant="ghost">
-              Clear saved
-            </Button>
-          </>
-        ) : null}
+      {inspector.localhostMode ? (
+        <>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-muted-foreground text-xs leading-none">Local preview</span>
+            <Badge className={inspector.appliedDraft ? "text-xs" : "invisible text-xs"} variant="outline">
+              Live
+            </Badge>
+          </div>
 
-        {inspector.localhostMode ? (
-          <>
+          <div className="flex flex-wrap gap-2">
             <Button
               disabled={!inspector.capturedDraft}
               onClick={inspector.applyCapturedTheme}
-              size="xs"
+              size="sm"
               type="button"
               variant="secondary"
             >
               <RocketIcon data-icon="inline-start" />
-              Apply to localhost
+              Apply
             </Button>
             <Button
               disabled={!inspector.appliedDraft}
               onClick={inspector.clearAppliedTheme}
-              size="xs"
+              size="sm"
               type="button"
               variant="ghost"
             >
-              Reset local
+              <RotateCcwIcon data-icon="inline-start" />
+              Reset
             </Button>
-          </>
-        ) : null}
-      </div>
+          </div>
+        </>
+      ) : null}
 
       {inspector.isLoading ? <p className="text-[11px] text-muted-foreground">Refreshing active page tokens…</p> : null}
-
-      {inspector.capturedDraft ? (
-        <p className="truncate text-[11px] text-muted-foreground">
-          {inspector.capturedDraft.sourceTitle || inspector.capturedDraft.sourceUrl}
-        </p>
-      ) : null}
-    </div>
+    </section>
   );
 }
 
@@ -231,18 +253,22 @@ export function ThemeTokenTabs({ inspector }: { inspector: ThemeTokenInspectorSt
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-muted-foreground text-xs">
-          Active mode: {inspector.snapshots.mode === "dark" ? "Dark" : "Light"}
-        </p>
-        <p className="text-muted-foreground text-xs">
-          {inspector.snapshots.snapshot.foundCount}/{inspector.snapshots.snapshot.totalCount} tokens found
-        </p>
-        <Button onClick={inspector.copyTheme} size="xs" type="button" variant="ghost">
-          <CopyIcon data-icon="inline-start" />
-          {inspector.copiedKey === "theme-active"
-            ? `Copied ${inspector.snapshots.mode === "dark" ? ".dark" : ":root"}`
-            : `Copy ${inspector.snapshots.mode === "dark" ? ".dark" : ":root"}`}
-        </Button>
+        <div className="flex min-w-0 flex-wrap items-center gap-2.5 text-xs">
+          <Badge variant="outline">{inspector.snapshots.mode === "dark" ? "Dark" : "Light"}</Badge>
+          <span className="text-muted-foreground">
+            {inspector.snapshots.snapshot.foundCount}/{inspector.snapshots.snapshot.totalCount} tokens found
+          </span>
+        </div>
+        <ButtonGroup aria-label="Current theme actions">
+          <Button disabled={inspector.isLoading} onClick={inspector.refresh} size="xs" type="button" variant="outline">
+            {inspector.isLoading ? <LoaderCircleIcon className="animate-spin" data-icon="inline-start" /> : null}
+            {inspector.isLoading ? "Reading..." : "Reread"}
+          </Button>
+          <Button onClick={inspector.copyTheme} size="xs" type="button" variant="outline">
+            <CopyIcon data-icon="inline-start" />
+            {inspector.copiedKey === "theme-active" ? "Copied :root" : "Copy :root"}
+          </Button>
+        </ButtonGroup>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
         <ThemeTokenRows
@@ -264,6 +290,7 @@ export function useThemeTokenInspector(isOpen: boolean): ThemeTokenInspectorStat
 
   const localhostMode = useMemo(() => isLocalhostPage(), []);
   const refreshRequestRef = useRef(0);
+  const loadingRequestCountRef = useRef(0);
   const openRefreshTimeoutRef = useRef<number | null>(null);
   const prewarmTimeoutRef = useRef<number | null>(null);
 
@@ -294,6 +321,7 @@ export function useThemeTokenInspector(isOpen: boolean): ThemeTokenInspectorStat
     refreshRequestRef.current = requestId;
 
     if (showLoading) {
+      loadingRequestCountRef.current += 1;
       setIsLoading(true);
       await waitForNextPaint();
       await waitForNextPaint();
@@ -316,8 +344,12 @@ export function useThemeTokenInspector(isOpen: boolean): ThemeTokenInspectorStat
       setCapturedDraft(nextCapturedDraft);
       setAppliedDraft(nextAppliedDraft);
     } finally {
-      if (showLoading && refreshRequestRef.current === requestId) {
-        setIsLoading(false);
+      if (showLoading) {
+        loadingRequestCountRef.current = Math.max(0, loadingRequestCountRef.current - 1);
+
+        if (loadingRequestCountRef.current === 0) {
+          setIsLoading(false);
+        }
       }
     }
   });
@@ -468,11 +500,11 @@ export function useThemeTokenInspector(isOpen: boolean): ThemeTokenInspectorStat
   const sourceLabel = capturedDraft ? new URL(capturedDraft.sourceUrl).hostname.replace(/^www\./, "") : null;
   const captureSummary = localhostMode
     ? capturedDraft
-      ? `Captured theme ready for ${window.location.origin}`
-      : "Capture a theme on any page, then apply it here."
+      ? "Saved for localhost preview."
+      : "Capture a theme to preview it on localhost."
     : capturedDraft
-      ? `Saved from ${sourceLabel || "captured page"}`
-      : "Save this page to reuse later on localhost.";
+      ? `Saved from ${sourceLabel || "captured page"}.`
+      : "Save this page to reuse on localhost.";
   const captureState = localhostMode ? (appliedDraft ? "Applied" : "Localhost") : capturedDraft ? "Saved" : null;
 
   return {

@@ -11,7 +11,8 @@ export default defineConfig({
   },
   manifest: {
     name: "Inspectcn",
-    description: "Chrome extension built with WXT, React, Tailwind CSS, and shadcn/ui.",
+    description:
+      "Chrome extension to inspect and extract shadcn-style theme tokens from any website, then bring them into your project.",
     action: {
       default_title: "inspectcn",
     },
