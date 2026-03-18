@@ -265,15 +265,65 @@ function getRelativeLuminance(red: number, green: number, blue: number) {
   return 0.2126 * toLinear(red) + 0.7152 * toLinear(green) + 0.0722 * toLinear(blue);
 }
 
-function inferThemeMode(tokens: TokenMap): ThemeMode {
-  const previewValue = getPreviewValue(tokens["--background"] ?? "");
+function inferThemeModeFromBackgroundValue(value: string) {
+  const previewValue = getPreviewValue(value);
   const rgbColor = parseRgbColor(resolveColorToRgb(previewValue));
 
   if (!rgbColor) {
-    return "light";
+    return null;
   }
 
   return getRelativeLuminance(rgbColor[0] ?? 255, rgbColor[1] ?? 255, rgbColor[2] ?? 255) < 0.33 ? "dark" : "light";
+}
+
+function inferThemeMode(tokens: TokenMap): ThemeMode {
+  return inferThemeModeFromBackgroundValue(tokens["--background"] ?? "") ?? "light";
+}
+
+function getExplicitModeFromElement(element: Element | null) {
+  if (!element) {
+    return null;
+  }
+
+  const classList = element instanceof HTMLElement ? element.classList : null;
+
+  if (classList?.contains("dark")) {
+    return "dark" as const;
+  }
+
+  if (classList?.contains("light")) {
+    return "light" as const;
+  }
+
+  const dataTheme = normalizeValue(element.getAttribute("data-theme") ?? "").toLowerCase();
+  const dataMode = normalizeValue(element.getAttribute("data-mode") ?? "").toLowerCase();
+  const dataColorScheme = normalizeValue(element.getAttribute("data-color-scheme") ?? "").toLowerCase();
+
+  for (const value of [dataTheme, dataMode, dataColorScheme]) {
+    if (value === "dark") {
+      return "dark" as const;
+    }
+
+    if (value === "light") {
+      return "light" as const;
+    }
+  }
+
+  const colorScheme = normalizeValue(getComputedStyle(element).colorScheme).toLowerCase();
+
+  if (colorScheme.includes("dark")) {
+    return "dark" as const;
+  }
+
+  if (colorScheme.includes("light")) {
+    return "light" as const;
+  }
+
+  return null;
+}
+
+function inferThemeModeFromDocument() {
+  return getExplicitModeFromElement(document.documentElement) ?? getExplicitModeFromElement(document.body);
 }
 
 function inferThemeModeFromPage(): ThemeMode | null {
@@ -366,7 +416,11 @@ export async function readThemeTokenSnapshots(): Promise<ActiveThemeSnapshot> {
   const activeTokens = readActiveTokens();
   const baseTokens = readBaseTokens();
   const mergedTokens = pickBetterTokenMap(activeTokens, baseTokens);
-  const activeMode = inferThemeModeFromPage() ?? inferThemeMode(mergedTokens);
+  const activeMode =
+    inferThemeModeFromDocument() ??
+    inferThemeModeFromBackgroundValue(activeTokens["--background"] ?? "") ??
+    inferThemeModeFromPage() ??
+    inferThemeMode(mergedTokens);
   const radius = mergedTokens["--radius"] || "";
 
   return {
