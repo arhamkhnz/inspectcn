@@ -7,6 +7,7 @@ import {
   PaletteIcon,
   RocketIcon,
   RotateCcwIcon,
+  RotateCwIcon,
   Trash2Icon,
 } from "lucide-react";
 
@@ -192,7 +193,7 @@ export function ThemeCapturePanel({ inspector }: { inspector: ThemeTokenInspecto
           variant="ghost"
         >
           <CopyIcon data-icon="inline-start" />
-          {inspector.copiedKey === "captured-theme" ? "Copied" : "Copy"}
+          {inspector.copiedKey === "captured-theme" ? "Copied saved" : "Copy saved"}
         </Button>
         <Button
           disabled={!inspector.capturedDraft}
@@ -202,7 +203,7 @@ export function ThemeCapturePanel({ inspector }: { inspector: ThemeTokenInspecto
           variant="ghost"
         >
           <Trash2Icon data-icon="inline-start" />
-          Clear
+          Clear saved
         </Button>
       </div>
 
@@ -224,7 +225,7 @@ export function ThemeCapturePanel({ inspector }: { inspector: ThemeTokenInspecto
               variant="secondary"
             >
               <RocketIcon data-icon="inline-start" />
-              Apply
+              Apply to localhost
             </Button>
             <Button
               disabled={!inspector.appliedDraft}
@@ -234,7 +235,7 @@ export function ThemeCapturePanel({ inspector }: { inspector: ThemeTokenInspecto
               variant="ghost"
             >
               <RotateCcwIcon data-icon="inline-start" />
-              Reset
+              Reset local
             </Button>
           </div>
         </>
@@ -250,6 +251,8 @@ export function ThemeTokenTabs({ inspector }: { inspector: ThemeTokenInspectorSt
     return null;
   }
 
+  const activeThemeSelector = inspector.snapshots.mode === "dark" ? ".dark" : ":root";
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -261,16 +264,20 @@ export function ThemeTokenTabs({ inspector }: { inspector: ThemeTokenInspectorSt
         </div>
         <ButtonGroup aria-label="Current theme actions">
           <Button disabled={inspector.isLoading} onClick={inspector.refresh} size="xs" type="button" variant="outline">
-            {inspector.isLoading ? <LoaderCircleIcon className="animate-spin" data-icon="inline-start" /> : null}
+            {inspector.isLoading ? (
+              <LoaderCircleIcon className="animate-spin" data-icon="inline-start" />
+            ) : (
+              <RotateCwIcon data-icon="inline-start" />
+            )}
             {inspector.isLoading ? "Reading..." : "Reread"}
           </Button>
           <Button onClick={inspector.copyTheme} size="xs" type="button" variant="outline">
             <CopyIcon data-icon="inline-start" />
-            {inspector.copiedKey === "theme-active" ? "Copied :root" : "Copy :root"}
+            {inspector.copiedKey === "theme-active" ? `Copied ${activeThemeSelector}` : `Copy ${activeThemeSelector}`}
           </Button>
         </ButtonGroup>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <ThemeTokenRows
           copiedKey={inspector.copiedKey}
           onCopy={inspector.copyValue}
