@@ -101,11 +101,9 @@ function normalizeValue(value: string) {
   return value.trim();
 }
 
-function getTrackedCssVars() {
-  return TOKEN_GROUPS.flatMap((group) => group.tokens.map((token) => `--${token}` as const));
-}
+export const TRACKED_CSS_VARS = TOKEN_GROUPS.flatMap((group) => group.tokens.map((token) => `--${token}` as const));
 
-const DETECTION_TOKENS = ["--radius" as const, ...getTrackedCssVars()];
+const DETECTION_TOKENS = ["--radius" as const, ...TRACKED_CSS_VARS];
 
 function isInspectcnElement(element: Element) {
   if (element.closest("[data-inspectcn-ui='true']")) {

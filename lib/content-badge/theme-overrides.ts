@@ -1,8 +1,7 @@
-import { type ActiveThemeSnapshot, buildThemeBlock } from "@/lib/content-badge/theme-tokens";
+import { type ActiveThemeSnapshot, buildThemeBlock, TRACKED_CSS_VARS } from "@/lib/content-badge/theme-tokens";
 
 const CAPTURED_THEME_KEY = "inspectcn:captured-theme";
 const LOCALHOST_THEME_KEY = "inspectcn:localhost-themes";
-const THEME_STYLE_ID = "inspectcn-theme-override";
 
 export type CapturedThemeDraft = {
   capturedAt: number;
@@ -28,29 +27,30 @@ export function isLocalhostPage(url = window.location.href) {
   }
 }
 
-export function buildThemeStyles(draft: CapturedThemeDraft) {
-  const lines = draft.snapshot.groups
-    .flatMap((group) => group.values)
-    .filter((token) => !token.isMissing)
-    .map((token) => `  ${token.cssVar}: ${token.value};`);
+export function applyThemeDraftToDocument(draft: CapturedThemeDraft) {
+  const rootStyle = document.documentElement.style;
 
-  if (draft.radius) {
-    lines.unshift(`  --radius: ${draft.radius};`);
+  for (const token of draft.snapshot.groups.flatMap((group) => group.values)) {
+    if (!token.isMissing) {
+      rootStyle.setProperty(token.cssVar, token.value);
+    }
   }
 
-  return `:root {\n${lines.join("\n")}\n}`;
-}
+  if (draft.radius) {
+    rootStyle.setProperty("--radius", draft.radius);
+  }
 
-export function applyThemeDraftToDocument(draft: CapturedThemeDraft) {
-  const style =
-    document.getElementById(THEME_STYLE_ID) ?? Object.assign(document.createElement("style"), { id: THEME_STYLE_ID });
-
-  style.textContent = buildThemeStyles(draft);
-  document.head.append(style);
+  rootStyle.colorScheme = draft.mode;
 }
 
 export function removeThemeDraftFromDocument() {
-  document.getElementById(THEME_STYLE_ID)?.remove();
+  const rootStyle = document.documentElement.style;
+
+  for (const token of ["--radius", ...TRACKED_CSS_VARS]) {
+    rootStyle.removeProperty(token);
+  }
+
+  rootStyle.colorScheme = "";
 }
 
 export async function readCapturedThemeDraft() {

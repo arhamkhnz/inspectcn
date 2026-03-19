@@ -2,7 +2,7 @@
   "name": "inspectcn",
   "description": "Chrome extension to inspect and extract shadcn-style theme tokens from any website, then bring them into your project.",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "wxt",
