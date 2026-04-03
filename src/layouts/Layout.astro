@@ -1,0 +1,31 @@
+---
+import { Font } from "astro:assets";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<Font cssVariable="--font-geist-sans" preload />
+		<Font cssVariable="--font-geist-mono" preload />
+		<Font cssVariable="--font-geist-pixel-line" preload />
+		<title>inspectcn</title>
+	</head>
+	<body class="font-ui-sans">
+		<slot />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>

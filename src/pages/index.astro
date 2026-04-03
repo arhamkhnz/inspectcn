@@ -1,0 +1,112 @@
+---
+import { SITE } from "../data/site";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <main class="min-h-dvh">
+    <section
+      class="mx-auto flex min-h-screen w-full max-w-none flex-col px-8 py-7 sm:px-10 sm:py-8 lg:px-12"
+    >
+      <header
+        class="grid items-center gap-6 border-b border-foreground/20 pb-6 text-[0.66rem] sm:grid-cols-[auto_1fr] sm:items-center"
+      >
+        <div class="flex items-start gap-3">
+          <p
+            class="font-ui-pixel text-2xl leading-none tracking-tight sm:text-3xl"
+          >
+            {SITE.name}
+          </p>
+        </div>
+
+        <div class="justify-self-start sm:ml-auto">
+          <div class="font-ui-mono flex gap-6 uppercase tracking-widest">
+            <a
+              href={SITE.links.github}
+              target="_blank"
+              rel="noreferrer"
+              class="transition hover:opacity-70"
+            >
+              GitHub
+            </a>
+            <a
+              href={SITE.links.chromeWebStore}
+              target="_blank"
+              rel="noreferrer"
+              class="transition hover:opacity-70"
+            >
+              Add to Chrome
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <section class="flex flex-1 flex-col pt-10 sm:pt-12 lg:pt-14">
+        <h1
+          class="font-ui-sans max-w-5xl text-balance text-6xl font-medium leading-[0.92] tracking-[-0.075em] sm:text-[5rem] md:text-[5.8rem] lg:text-[6rem]"
+        >
+          Extract shadcn-style theme tokens from sites that use them.
+        </h1>
+
+        <div
+          class="mt-14 grid gap-8 lg:grid-cols-[8.5rem_minmax(0,1.05fr)_minmax(15rem,0.95fr)] lg:gap-10"
+        >
+          <div class="pt-1">
+            <div
+              class="grid gap-3 border-l border-[#d2d0e3] pl-5 sm:max-w-[20rem]"
+            >
+              <div
+                class="space-y-1 font-ui-mono text-[0.5rem] uppercase tracking-widest"
+              >
+                <p class="text-foreground/70">Industry</p>
+                <p>{SITE.meta.industry}</p>
+              </div>
+              <div
+                class="space-y-1 font-ui-mono text-[0.5rem] uppercase tracking-widest"
+              >
+                <p class="text-foreground/70">Scope</p>
+                <p>{SITE.meta.scope}</p>
+              </div>
+              <div
+                class="space-y-1 font-ui-mono text-[0.5rem] uppercase tracking-widest"
+              >
+                <p class="text-foreground/70">Version</p>
+                <p>{SITE.meta.version}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-8">
+            <p
+              class="font-ui-sans max-w-136 text-4xl leading-[1.02] tracking-[-0.06em] sm:text-[2.7rem] lg:text-5xl"
+            >
+              Inspectcn extracts shadcn-style theme tokens from live interfaces
+              using computed values without relying on incomplete source CSS.
+            </p>
+          </div>
+
+          <div
+            class="grid gap-7 font-ui-mono text-xs leading-5 text-foreground/75 sm:grid-cols-2 lg:grid-cols-1"
+          >
+            <p>
+              Through computed style sampling, Inspectcn reads what the UI is
+              actually rendering and extracts shadcn-style theme tokens when
+              they exist. That means you get the real token values in use, not
+              whatever the source CSS suggests.
+            </p>
+            <p>
+              The workflow is straightforward: install the extension, click the
+              Inspectcn badge, and it reads the page and captures the token set.
+              From there, copy the CSS variables or preview them locally before
+              using them in your project.
+            </p>
+            <p>
+              Inspectcn is still evolving. Open an issue for bugs or feature
+              requests.
+            </p>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+</Layout>

@@ -1,11 +1,5 @@
 {
-  "extends": "./.wxt/tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "allowImportingTsExtensions": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/*": ["./*"]
-    }
-  }
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
 }
