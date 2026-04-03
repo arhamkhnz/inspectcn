@@ -1,12 +1,13 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config';
-
 import tailwindcss from '@tailwindcss/vite';
+
+const isProduction = import.meta.env.PROD
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://arhamkhnz.github.io',
-  base: '/inspectcn',
+  base: isProduction ? '/inspectcn' : '/',
   fonts: [
     {
       provider: fontProviders.local(),
