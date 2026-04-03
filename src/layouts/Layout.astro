@@ -2,7 +2,9 @@
 import { Font } from "astro:assets";
 import "../styles/global.css";
 
-const base = import.meta.env.BASE_URL;
+const assetBase = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
 ---
 
 <!doctype html>
@@ -10,18 +12,18 @@ const base = import.meta.env.BASE_URL;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
-    <link rel="icon" href={`${base}favicon.ico`} />
+    <link rel="icon" type="image/svg+xml" href={`${assetBase}favicon.svg`} />
+    <link rel="icon" href={`${assetBase}favicon.ico`} />
     <meta name="generator" content={Astro.generator} />
-		<meta
-			name="description"
-			content="Chrome extension that reads computed styles and extracts shadcn-style theme tokens from live UI when present. Copy the CSS variables and preview them locally in your project."
-		/>
-		<Font cssVariable="--font-geist-sans" preload />
-		<Font cssVariable="--font-geist-mono" preload />
-		<Font cssVariable="--font-geist-pixel-line" preload />
-		<title>Inspectcn — Extract shadcn-style theme tokens from live UI</title>
-	</head>
+    <meta
+      name="description"
+      content="Chrome extension that reads computed styles and extracts shadcn-style theme tokens from live UI when present. Copy the CSS variables and preview them locally in your project."
+    />
+    <Font cssVariable="--font-geist-sans" preload />
+    <Font cssVariable="--font-geist-mono" preload />
+    <Font cssVariable="--font-geist-pixel-line" preload />
+    <title>Inspectcn — Extract shadcn-style theme tokens from live UI</title>
+  </head>
   <body class="font-ui-sans">
     <slot />
   </body>
