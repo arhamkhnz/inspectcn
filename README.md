@@ -1,5 +1,8 @@
 # Inspectcn
 
+> [!NOTE]
+> Inspectcn has moved to [shadcn-labs/inspectcn](https://github.com/shadcn-labs/inspectcn). This repository is no longer maintained. Please visit the new repository for updates, issues, and contributions.
+
 Inspectcn is a Chrome extension to inspect and extract shadcn-style theme tokens from any website, then bring them into your project.
 
 It adds a small badge to the page. Open it, inspect the active tokens, copy the generated CSS block, or save a theme and preview it on localhost.
